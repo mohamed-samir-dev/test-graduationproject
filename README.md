@@ -1,4 +1,36 @@
+# Next.js Attendance Management System
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── login/             # Login page
+│   ├── users/             # Users listing page
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page (redirects to login)
+├── components/            # React components
+│   ├── features/          # Feature-specific components
+│   │   └── users/         # User-related components
+│   └── ui/                # Reusable UI components
+├── lib/                   # Utilities and configurations
+│   ├── firebase/          # Firebase configuration
+│   ├── services/          # API service layer
+│   ├── types/             # TypeScript type definitions
+│   └── constants/         # Application constants
+└── public/                # Static assets
+```
+
+## Features
+
+- **Authentication System**: Login with username/password and facial recognition
+- **User Management**: View and search through user profiles
+- **Attendance Tracking**: Camera-based attendance marking
+- **Responsive Design**: Mobile-first responsive UI
+- **TypeScript**: Full type safety throughout the application
+- **Firebase Integration**: Real-time database for user data
 
 ## Getting Started
 
@@ -16,9 +48,29 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Firebase Firestore
+- **Authentication**: Custom Firebase authentication
+- **Image Handling**: Next.js Image optimization
+
+## Project Architecture
+
+### Component Organization
+- **Feature-based structure**: Components are organized by features (users, auth, etc.)
+- **Reusable UI components**: Common components in `components/ui/`
+- **Service layer**: Business logic separated into `lib/services/`
+
+### Type Safety
+- **TypeScript interfaces**: Defined in `lib/types/`
+- **Strict typing**: All components and services are fully typed
+
+### Firebase Integration
+- **Configuration**: Centralized in `lib/firebase/config.ts`
+- **Services**: Database operations abstracted in service layer
 
 ## Learn More
 
