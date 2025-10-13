@@ -20,6 +20,7 @@ import Card from "@/components/common/Card";
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [faceLoading, setFaceLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
@@ -66,6 +67,7 @@ export default function LoginPage() {
   };
 
   const handleFacialRecognition = () => {
+    setFaceLoading(true);
     router.push("/camera");
   };
 
@@ -100,7 +102,7 @@ export default function LoginPage() {
           
           <AuthDivider />
           
-          <FacialRecognitionButton onClick={handleFacialRecognition} />
+          <FacialRecognitionButton onClick={handleFacialRecognition} loading={faceLoading} />
           
           <p className="text-center text-xs sm:text-sm text-gray-500 mt-3 sm:mt-4 leading-relaxed">
             Position your face in the frame with good lighting for accurate recognition.

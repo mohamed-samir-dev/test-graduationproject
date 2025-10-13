@@ -19,6 +19,7 @@ export default function CameraPage() {
   const [attemptsRemaining, setAttemptsRemaining] = useState(3);
   const [exhaustedAttempts, setExhaustedAttempts] = useState(false);
   const [multipleFaces, setMultipleFaces] = useState(false);
+  const [detecting, setDetecting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function CameraPage() {
     }
 
     try {
+      setDetecting(true);
       setError("");
       setMultipleFaces(false);
       const result = await detectFace(imageData);
@@ -84,6 +86,8 @@ export default function CameraPage() {
     } catch (error) {
       console.error("Face detection error:", error);
       setError("Connection error. Please check if the Python server is running on localhost:5000.");
+    } finally {
+      setDetecting(false);
     }
   };
 
@@ -148,7 +152,7 @@ export default function CameraPage() {
           <CameraControls
             cameraActive={cameraActive}
             attendanceMarked={attendanceMarked}
-            isProcessing={isProcessing}
+            isProcessing={isProcessing || detecting}
             error={error}
             exhaustedAttempts={exhaustedAttempts}
             attemptsRemaining={attemptsRemaining}

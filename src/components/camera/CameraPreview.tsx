@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import { Camera, AlertTriangle, CheckCircle2, Loader2, Users, ScanFace } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, Users, ScanFace } from "lucide-react";
 
 interface CameraPreviewProps {
   cameraActive: boolean;
@@ -14,7 +14,7 @@ interface CameraPreviewProps {
 }
 
 const CameraPreview = forwardRef<HTMLVideoElement, CameraPreviewProps>(
-  ({ cameraActive, isProcessing, attendanceMarked, error, exhaustedAttempts, attemptsRemaining, multipleFaces }, ref) => {
+  ({ cameraActive, isProcessing, attendanceMarked, error, exhaustedAttempts, multipleFaces }, ref) => {
     return (
       <div className="bg-gray-100 rounded-xl h-48 sm:h-64 relative overflow-hidden">
         <video
