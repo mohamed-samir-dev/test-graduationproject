@@ -1,0 +1,66 @@
+import { Clock, AlertTriangle, XCircle } from "lucide-react";
+
+interface SummaryCardProps {
+  title: string;
+  value?: string | number;
+  color?: "blue" | "yellow" | "red";
+  icon?: React.ReactNode;
+}
+
+function SummaryCard({ title, value, color = "blue", icon }: SummaryCardProps) {
+  const colorClasses = {
+    blue: "from-blue-50 to-blue-100 border-blue-200",
+    yellow: "from-amber-50 to-orange-100 border-amber-200", 
+    red: "from-red-50 to-red-100 border-red-200"
+  };
+
+  const iconColors = {
+    blue: "text-blue-600",
+    yellow: "text-amber-600",
+    red: "text-red-600"
+  };
+
+  return (
+    <div className="bg-white rounded-3xl border border-gray-200 p-6 ">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-sm font-semibold text-[#555]">
+          {title}
+        </h4>
+        <div className={`p-2 rounded-full bg-gradient-to-r ${colorClasses[color]}`}>
+          <div className={iconColors[color]}>
+            {icon}
+          </div>
+        </div>
+      </div>
+      {value && (
+        <div className="text-2xl font-bold text-gray-800">{value}</div>
+      )}
+    </div>
+  );
+}
+
+export default function AttendanceSummary() {
+  return (
+    <div className="mb-8">
+      <h3 className="text-lg font-bold text-[#1A1A1A] mb-4">
+        Monthly Attendance Summary
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <SummaryCard 
+          title="Total Hours Worked" 
+          icon={<Clock className="w-5 h-5" />} 
+        />
+        <SummaryCard 
+          title="Late Arrivals" 
+          color="yellow" 
+          icon={<AlertTriangle className="w-5 h-5" />} 
+        />
+        <SummaryCard 
+          title="Absences" 
+          color="red" 
+          icon={<XCircle className="w-5 h-5" />} 
+        />
+      </div>
+    </div>
+  );
+}

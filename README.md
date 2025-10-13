@@ -8,18 +8,25 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── login/             # Login page
-│   ├── users/             # Users listing page
+│   ├── camera/            # Camera page for attendance
+│   ├── userData/          # Dashboard page
 │   ├── layout.tsx         # Root layout
 │   └── page.tsx           # Home page (redirects to login)
-├── components/            # React components
-│   ├── features/          # Feature-specific components
-│   │   └── users/         # User-related components
-│   └── ui/                # Reusable UI components
+├── components/            # React components (organized by feature)
+│   ├── auth/              # Authentication components
+│   ├── camera/            # Camera-related components
+│   ├── dashboard/         # Dashboard components
+│   ├── layout/            # Layout components
+│   ├── common/            # Reusable UI components
+│   ├── ui/                # Basic UI components
+│   └── features/          # Feature-specific components
+├── hooks/                 # Custom React hooks
 ├── lib/                   # Utilities and configurations
 │   ├── firebase/          # Firebase configuration
 │   ├── services/          # API service layer
 │   ├── types/             # TypeScript type definitions
 │   └── constants/         # Application constants
+├── utils/                 # Utility functions
 └── public/                # Static assets
 ```
 
@@ -60,17 +67,31 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Project Architecture
 
 ### Component Organization
-- **Feature-based structure**: Components are organized by features (users, auth, etc.)
-- **Reusable UI components**: Common components in `components/ui/`
-- **Service layer**: Business logic separated into `lib/services/`
+- **Feature-based structure**: Components organized by features (auth, camera, dashboard)
+- **Small, focused components**: Each component has a single responsibility
+- **Custom hooks**: Business logic extracted into reusable hooks
+- **Reusable UI components**: Common patterns in `components/common/`
+
+### Key Architectural Principles
+- **Modularity**: Small components (< 150 lines) for better maintainability
+- **Reusability**: Extracted common UI patterns and business logic
+- **Type Safety**: Full TypeScript coverage with proper interfaces
+- **Separation of Concerns**: Clear distinction between UI, business logic, and data
+
+### Custom Hooks
+- **useAuth**: Centralized authentication and session management
+- **useCamera**: Camera access, control, and image capture functionality
 
 ### Type Safety
-- **TypeScript interfaces**: Defined in `lib/types/`
-- **Strict typing**: All components and services are fully typed
+- **TypeScript interfaces**: Defined in `lib/types/` with proper exports
+- **Strict typing**: All components, hooks, and services are fully typed
+- **Type-safe API calls**: Utility functions with proper return types
 
 ### Firebase Integration
 - **Configuration**: Centralized in `lib/firebase/config.ts`
 - **Services**: Database operations abstracted in service layer
+
+For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 ## Learn More
 
