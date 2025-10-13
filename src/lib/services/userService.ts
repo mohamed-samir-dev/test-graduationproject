@@ -24,6 +24,6 @@ export const createUserWithId = async (userData: Omit<User, 'id' | 'numericId'>)
   return newUser;
 };
 
-export const getUserDisplayId = (user: any): string => {
+export const getUserDisplayId = (user: User): string => {
   return user?.numericId?.toString() || "1";
 };
