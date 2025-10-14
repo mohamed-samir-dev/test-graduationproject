@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/layout/Navbar";
@@ -12,7 +13,18 @@ export default function DashboardPage() {
   const { user, mounted, logout } = useAuth();
   const router = useRouter();
 
+  // Redirect admin to admin dashboard
+  useEffect(() => {
+    if (user && user.numericId === 1) {
+      router.push("/admin");
+    }
+  }, [user, router]);
+
   if (!mounted || !user) {
+    return null;
+  }
+
+  if (user && user.numericId === 1) {
     return null;
   }
 
@@ -21,7 +33,7 @@ export default function DashboardPage() {
   };
 
   const handleRequestLeave = () => {
-    alert("Leave request functionality coming soon!");
+    router.push("/leaveRequest");
   };
 
   return (

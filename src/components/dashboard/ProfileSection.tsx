@@ -30,7 +30,7 @@ export default function ProfileSection({ user, onRequestLeave, onTakePhoto }: Pr
               {user.name || "Sophia Clark"}
             </h2>
             <p className="text-xs sm:text-sm text-[#555] mb-1">
-              Employee ID: {user.id || "12345"}
+              Employee ID: {user.numericId || "12345"}
             </p>
           </div>
         </div>

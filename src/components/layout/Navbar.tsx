@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Bell, Menu, X } from "lucide-react";
 import { DocumentData } from "firebase/firestore";
 import AppLogo from "./AppLogo";
+import { useNotifications } from "@/hooks/useNotifications";
+import { markAsRead } from "@/lib/services/notificationService";
+import Toast from "@/components/common/Toast";
 
 interface NavbarProps {
   user?: DocumentData | null;
@@ -26,6 +29,24 @@ export default function Navbar({
   navigationItems = []
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning'; isVisible: boolean }>({ message: '', type: 'success', isVisible: false });
+  
+  const { notifications, refetch } = useNotifications(user?.numericId?.toString() || '');
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  useEffect(() => {
+    const latestUnread = notifications.find(n => !n.isRead);
+    if (latestUnread) {
+      const type = latestUnread.type === 'leave_approved' ? 'success' : 'warning';
+      setToast({ message: latestUnread.message, type, isVisible: true });
+    }
+  }, [notifications]);
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    await markAsRead(notificationId);
+    refetch();
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -55,7 +76,62 @@ export default function Navbar({
           <div className="flex items-center space-x-2 sm:space-x-4">
             {user && (
               <>
-                <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-[#555] cursor-pointer hover:text-[#1A1A1A]" />
+                <div className="relative">
+                  <Bell 
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-[#555] cursor-pointer hover:text-[#1A1A1A]" 
+                    onClick={() => {
+                      setIsNotificationOpen(!isNotificationOpen);
+                      if (!isNotificationOpen) {
+                        notifications.filter(n => !n.isRead).forEach(n => markAsRead(n.id));
+                        setTimeout(() => refetch(), 100);
+                      }
+                    }}
+                  />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                  
+                  {isNotificationOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border z-50">
+                      <div className="p-4 border-b">
+                        <h3 className="font-semibold text-gray-900">Notifications</h3>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="p-4 text-center text-gray-500">
+                            No notifications
+                          </div>
+                        ) : (
+                          notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`p-4 border-b hover:bg-gray-50 ${!notification.isRead ? 'bg-blue-50' : ''}`}
+                            >
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <p className="text-sm text-gray-900">{notification.message}</p>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {new Date(notification.createdAt).toLocaleString()}
+                                  </p>
+                                </div>
+                                {!notification.isRead && (
+                                  <button
+                                    onClick={() => handleMarkAsRead(notification.id)}
+                                    className="ml-2 text-blue-600 hover:text-blue-800"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <Image
                   src={user.image}
                   alt={user.name}
@@ -96,6 +172,14 @@ export default function Navbar({
           </div>
         )}
       </div>
+      
+      <Toast 
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+        duration={3000}
+      />
     </nav>
   );
 }

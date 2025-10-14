@@ -1,4 +1,7 @@
 import { Clock, AlertTriangle, XCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useLeaveRequests } from "@/hooks/useLeaveRequests";
+import AbsenceRequestsCard from "./AbsenceRequestsCard";
 
 interface SummaryCardProps {
   title: string;
@@ -32,20 +35,27 @@ function SummaryCard({ title, value, color = "blue", icon }: SummaryCardProps) {
           </div>
         </div>
       </div>
-      {value && (
-        <div className="text-2xl font-bold text-gray-800">{value}</div>
+      {value !== undefined && (
+        <div className="text-3xl font-bold text-black">{value}</div>
       )}
     </div>
   );
 }
 
 export default function AttendanceSummary() {
+  const { user } = useAuth();
+  const { leaveRequests } = useLeaveRequests();
+  
+  const userAbsences = leaveRequests.filter(req => 
+    req.employeeId === user?.numericId?.toString() && req.status === 'Approved'
+  ).length;
+
   return (
     <div className="mb-8">
       <h3 className="text-lg font-bold text-[#1A1A1A] mb-4">
         Monthly Attendance Summary
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <SummaryCard 
           title="Total Hours Worked" 
           icon={<Clock className="w-5 h-5" />} 
@@ -57,10 +67,12 @@ export default function AttendanceSummary() {
         />
         <SummaryCard 
           title="Absences" 
+          value={userAbsences}
           color="red" 
           icon={<XCircle className="w-5 h-5" />} 
         />
       </div>
+      <AbsenceRequestsCard />
     </div>
   );
 }

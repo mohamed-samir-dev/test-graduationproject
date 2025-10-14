@@ -1,0 +1,53 @@
+import { collection, getDocs, query, orderBy, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { LeaveRequest } from "@/lib/types";
+
+export const getLeaveRequests = async (): Promise<LeaveRequest[]> => {
+  try {
+    const leaveCollection = collection(db, "leaveRequests");
+    const q = query(leaveCollection, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LeaveRequest));
+  } catch (error) {
+    console.error("Error fetching leave requests:", error);
+    return [];
+  }
+};
+
+export const submitLeaveRequest = async (requestData: Omit<LeaveRequest, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
+  try {
+    const leaveCollection = collection(db, "leaveRequests");
+    const now = new Date().toISOString();
+    await addDoc(leaveCollection, {
+      ...requestData,
+      createdAt: now,
+      updatedAt: now
+    });
+  } catch (error) {
+    console.error("Error submitting leave request:", error);
+    throw new Error("Failed to submit leave request");
+  }
+};
+
+export const updateLeaveRequestStatus = async (requestId: string, status: 'Pending' | 'Approved' | 'Rejected'): Promise<void> => {
+  try {
+    const requestRef = doc(db, "leaveRequests", requestId);
+    await updateDoc(requestRef, {
+      status,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Error updating leave request status:", error);
+    throw new Error("Failed to update leave request status");
+  }
+};
+
+export const deleteLeaveRequest = async (requestId: string): Promise<void> => {
+  try {
+    const requestRef = doc(db, "leaveRequests", requestId);
+    await deleteDoc(requestRef);
+  } catch (error) {
+    console.error("Error deleting leave request:", error);
+    throw new Error("Failed to delete leave request");
+  }
+};
