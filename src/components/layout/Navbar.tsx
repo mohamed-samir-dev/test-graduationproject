@@ -32,7 +32,7 @@ export default function Navbar({
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning'; isVisible: boolean }>({ message: '', type: 'success', isVisible: false });
   
-  const { notifications, refetch } = useNotifications(user?.numericId?.toString() || '');
+  const { notifications } = useNotifications(user?.numericId?.toString() || '');
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function Navbar({
 
   const handleMarkAsRead = async (notificationId: string) => {
     await markAsRead(notificationId);
-    refetch();
   };
 
   return (
@@ -83,7 +82,6 @@ export default function Navbar({
                       setIsNotificationOpen(!isNotificationOpen);
                       if (!isNotificationOpen) {
                         notifications.filter(n => !n.isRead).forEach(n => markAsRead(n.id));
-                        setTimeout(() => refetch(), 100);
                       }
                     }}
                   />

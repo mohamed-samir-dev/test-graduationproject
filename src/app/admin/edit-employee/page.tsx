@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
 import NavigationBlocker from "@/components/NavigationBlocker";
@@ -22,30 +21,6 @@ export default function EditEmployeePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const router = useRouter();
-
-  const handleTabChange = (tab: string) => {
-    switch (tab) {
-      case "Dashboard":
-        router.push("/admin");
-        break;
-      case "Attendance":
-        router.push("/admin/attendance");
-        break;
-      case "Leaves":
-        router.push("/admin/leaves");
-        break;
-      case "Reports":
-        router.push("/admin/reports");
-        break;
-      case "UserManagement":
-        router.push("/admin");
-        break;
-      case "Settings":
-        router.push("/admin/settings");
-        break;
-    }
-  };
 
   if (!mounted || !user || user.numericId !== 1) {
     return null;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
 import NavigationBlocker from "@/components/NavigationBlocker";

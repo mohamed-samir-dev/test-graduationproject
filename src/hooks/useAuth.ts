@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DocumentData } from "firebase/firestore";
+import { getUsers } from "@/lib/services/userService";
 
 export function useAuth() {
   const [user, setUser] = useState<DocumentData | null>(null);
@@ -22,6 +23,21 @@ export function useAuth() {
     }
   }, [router]);
 
+  const refreshUserData = async () => {
+    if (user) {
+      try {
+        const users = await getUsers();
+        const updatedUser = users.find(u => u.id === user.id);
+        if (updatedUser) {
+          setUser(updatedUser);
+          sessionStorage.setItem("attendanceUser", JSON.stringify(updatedUser));
+        }
+      } catch (error) {
+        console.error("Error refreshing user data:", error);
+      }
+    }
+  };
+
   const clearSession = () => {
     if (typeof window !== "undefined") {
       sessionStorage.removeItem("attendanceUser");
@@ -40,6 +56,7 @@ export function useAuth() {
     user,
     mounted,
     logout,
-    clearSession
+    clearSession,
+    refreshUserData
   };
 }

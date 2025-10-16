@@ -6,4 +6,8 @@ export interface User {
   email?: string;
   image: string;
   password?: string;
+  department?: string;
+  Department?: string;
+  jobTitle?: string;
+  status?: 'Active' | 'OnLeave' | 'Inactive';
 }

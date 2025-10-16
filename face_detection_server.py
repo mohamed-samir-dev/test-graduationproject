@@ -9,9 +9,8 @@ import io
 from PIL import Image
 
 app = Flask(__name__)
-CORS(app)  # السماح للـ Frontend (Next.js) بالاتصال بالسيرفر
+CORS(app) 
 
-# تحميل مصنف كشف الوجوه من OpenCV
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 @app.route('/')
@@ -68,5 +67,4 @@ def detect_face():
 
 
 if __name__ == '__main__':
-    # تشغيل السيرفر المحلي
     app.run(host='localhost', port=5000, debug=True)

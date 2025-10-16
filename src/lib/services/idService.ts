@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 const ID_COUNTER_DOC = "userIdCounter";
@@ -6,16 +6,24 @@ const COUNTERS_COLLECTION = "counters";
 
 export const getNextUserId = async (): Promise<number> => {
   try {
+    // Get all users to find the highest existing ID
+    const usersCollection = collection(db, "users");
+    const snapshot = await getDocs(usersCollection);
+    
+    let highestId = 0;
+    snapshot.docs.forEach(doc => {
+      const userData = doc.data();
+      if (userData.numericId && userData.numericId > highestId) {
+        highestId = userData.numericId;
+      }
+    });
+    
+    const nextId = highestId + 1;
+    
+    // Update counter for consistency
     const counterRef = doc(db, COUNTERS_COLLECTION, ID_COUNTER_DOC);
-    const counterDoc = await getDoc(counterRef);
-    
-    let nextId = 1;
-    
-    if (counterDoc.exists()) {
-      nextId = (counterDoc.data().currentId || 0) + 1;
-    }
-    
     await setDoc(counterRef, { currentId: nextId });
+    
     return nextId;
   } catch (error) {
     console.error("Error getting next user ID:", error);
