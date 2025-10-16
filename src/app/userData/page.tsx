@@ -10,15 +10,22 @@ import AttendanceChart from "@/components/dashboard/AttendanceChart";
 import NavigationBlocker from "@/components/NavigationBlocker";
 
 export default function DashboardPage() {
-  const { user, mounted, logout } = useAuth();
+  const { user, mounted, logout, refreshUserData } = useAuth();
   const router = useRouter();
 
-  // Redirect admin to admin dashboard
+  // Redirect admin to admin dashboard and refresh user data
   useEffect(() => {
     if (user && user.numericId === 1) {
       router.push("/admin");
     }
   }, [user, router]);
+
+  // Refresh user data on component mount
+  useEffect(() => {
+    if (mounted && user && refreshUserData) {
+      refreshUserData();
+    }
+  }, [mounted, user, refreshUserData]);
 
   if (!mounted || !user) {
     return null;
