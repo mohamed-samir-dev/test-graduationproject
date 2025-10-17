@@ -103,6 +103,24 @@ export default function AddEmployeeForm() {
         status: "Active",
       });
 
+      // Send credentials email
+      try {
+        await fetch('/api/send-credentials', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            username,
+            password,
+          }),
+        });
+      } catch (emailError) {
+        console.error('Error sending email:', emailError);
+      }
+
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -347,7 +365,7 @@ export default function AddEmployeeForm() {
             <div>
               <h4 className="text-base lg:text-lg font-semibold text-gray-900">Employee Added</h4>
               <p className="text-xs lg:text-sm text-gray-600">
-                New employee has been successfully added to the system
+                New employee added and credentials sent via email
               </p>
             </div>
           </div>
