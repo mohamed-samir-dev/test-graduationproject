@@ -4,12 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NextImage from "next/image";
 import {
-
   User,
   Mail,
   Building,
   Briefcase,
-
+  DollarSign,
   Camera,
   Plus,
 } from "lucide-react";
@@ -25,6 +24,7 @@ export default function AddEmployeeForm() {
     email: "",
     department: "",
     jobTitle: "",
+    salary: "",
     image: "",
   });
   const [imageOption, setImageOption] = useState("upload"); // "upload", "url"
@@ -97,6 +97,7 @@ export default function AddEmployeeForm() {
         email: formData.email,
         department: formData.department,
         jobTitle: formData.jobTitle,
+        salary: parseInt(formData.salary),
         image: getImageUrl(),
         password,
         status: "Active",
@@ -198,6 +199,24 @@ export default function AddEmployeeForm() {
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
                 placeholder="Enter job title"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <DollarSign className="w-4 h-4 inline mr-2" />
+                Salary
+              </label>
+              <input
+                type="number"
+                required
+                value={formData.salary}
+                onChange={(e) =>
+                  setFormData({ ...formData, salary: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                placeholder="Enter salary amount"
+                min="0"
               />
             </div>
           </div>

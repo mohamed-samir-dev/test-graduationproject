@@ -12,6 +12,7 @@ import LeavesContent from "@/components/admin/LeavesContent";
 import ReportsContent from "@/components/admin/ReportsContent";
 import UserManagementContent from "@/components/admin/UserManagementContent";
 import SettingsContent from "@/components/admin/SettingsContent";
+import DepartmentsContent from "@/components/admin/DepartmentsContent";
 
 export default function AdminDashboard() {
   const { user, mounted, logout } = useAuth();
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
           {activeTab === "Leaves" && <LeavesContent searchQuery={searchQuery} />}
           {activeTab === "Reports" && <ReportsContent />}
           {activeTab === "UserManagement" && <UserManagementContent />}
+          {activeTab === "Departments" && <DepartmentsContent />}
           {activeTab === "Settings" && <SettingsContent />}
         </div>
       </div>

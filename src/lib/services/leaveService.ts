@@ -1,4 +1,4 @@
-import { collection, getDocs, query, orderBy, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { LeaveRequest } from "@/lib/types";
 
@@ -16,9 +16,13 @@ export const getLeaveRequests = async (): Promise<LeaveRequest[]> => {
 
 export const submitLeaveRequest = async (requestData: Omit<LeaveRequest, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> => {
   try {
-    const leaveCollection = collection(db, "leaveRequests");
     const now = new Date().toISOString();
-    await addDoc(leaveCollection, {
+    const timestamp = new Date().getTime();
+    const documentId = `leave_req_${requestData.employeeId}_${timestamp}`;
+    const requestRef = doc(db, "leaveRequests", documentId);
+    
+    await setDoc(requestRef, {
+      id: documentId,
       ...requestData,
       createdAt: now,
       updatedAt: now

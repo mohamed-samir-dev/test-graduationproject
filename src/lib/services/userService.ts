@@ -12,10 +12,11 @@ export const getUsers = async (): Promise<User[]> => {
 
 export const createUserWithId = async (userData: Omit<User, 'id' | 'numericId'>): Promise<User> => {
   const numericId = await getNextUserId();
-  const userRef = doc(collection(db, "users"));
+  const documentId = `user_${numericId.toString().padStart(4, '0')}_${userData.username}`;
+  const userRef = doc(db, "users", documentId);
   
   const newUser: User = {
-    id: userRef.id,
+    id: documentId,
     numericId,
     ...userData
   };
@@ -30,7 +31,35 @@ export const getUserDisplayId = (user: User): string => {
 
 export const updateUserDepartment = async (userId: string, department: string): Promise<void> => {
   const userRef = doc(db, "users", userId);
-  await updateDoc(userRef, { department });
+  await updateDoc(userRef, { department, Department: department });
+  
+  // Update department employee count
+  try {
+    const { updateDepartmentEmployeeCount, getCompanySettings } = await import('./settingsService');
+    const settings = await getCompanySettings();
+    const dept = settings.departments.find(d => d.name === department);
+    if (dept) {
+      await updateDepartmentEmployeeCount(dept.id);
+    }
+  } catch (error) {
+    console.error('Error updating department employee count:', error);
+  }
+};
+
+export const getUsersByDepartment = async (departmentName: string): Promise<User[]> => {
+  const users = await getUsers();
+  return users.filter(user => 
+    user.department === departmentName || user.Department === departmentName
+  );
+};
+
+export const assignUserToDepartment = async (userId: string, departmentName: string): Promise<void> => {
+  await updateUserDepartment(userId, departmentName);
+};
+
+export const removeUserFromDepartment = async (userId: string): Promise<void> => {
+  const userRef = doc(db, "users", userId);
+  await updateDoc(userRef, { department: '', Department: '' });
 };
 
 export const updateUser = async (userId: string, userData: Partial<User>): Promise<void> => {

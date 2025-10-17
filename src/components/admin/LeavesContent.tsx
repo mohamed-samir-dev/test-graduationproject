@@ -21,7 +21,7 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning'; isVisible: boolean }>({ message: '', type: 'success', isVisible: false });
 
-  const statusTabs = ["All Request", "Pending", "Approve", "Rejected"];
+  const statusTabs = ["All Request", "Pending", "Approve", "Rejected", "Expired"];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -107,6 +107,9 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
               } else if (tab === "Rejected") {
                 count = leaveRequests.filter(r => r.status === 'Rejected').length;
                 badgeColor = "bg-red-200 text-red-800";
+              } else if (tab === "Expired") {
+                count = leaveRequests.filter(r => new Date(r.endDate) < new Date() && r.status === 'Approved').length;
+                badgeColor = "bg-purple-200 text-purple-800";
               }
               
               return (
@@ -151,6 +154,7 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
                         request.leaveType.toLowerCase().includes(searchQuery.toLowerCase());
                       const matchesStatus = statusFilter === "All Request" || 
                         (statusFilter === "Approve" && request.status === "Approved") ||
+                        (statusFilter === "Expired" && new Date(request.endDate) < new Date() && request.status === 'Approved') ||
                         request.status === statusFilter;
                       return matchesSearch && matchesStatus;
                     })
@@ -169,8 +173,12 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
                           <div className="text-xs text-gray-500">to {new Date(request.endDate).toLocaleDateString()}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(request.status)}`}>
-                            {request.status}
+                          <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
+                            new Date(request.endDate) < new Date() && request.status === 'Approved'
+                              ? 'bg-purple-50 text-purple-700 border-purple-200'
+                              : getStatusColor(request.status)
+                          }`}>
+                            {new Date(request.endDate) < new Date() && request.status === 'Approved' ? 'Expired' : request.status}
                           </span>
                         </td>
                         <td className="px-6 py-4">
@@ -204,6 +212,7 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
                       request.leaveType.toLowerCase().includes(searchQuery.toLowerCase());
                     const matchesStatus = statusFilter === "All Request" || 
                       (statusFilter === "Approve" && request.status === "Approved") ||
+                      (statusFilter === "Expired" && new Date(request.endDate) < new Date() && request.status === 'Approved') ||
                       request.status === statusFilter;
                     return matchesSearch && matchesStatus;
                   }).length === 0 && (

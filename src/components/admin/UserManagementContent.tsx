@@ -4,13 +4,16 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Filter, ArrowUpDown, Edit, Trash2, Search, AlertTriangle, X } from "lucide-react";
 import { getUsers, deleteUser } from "@/lib/services/userService";
-import { User } from "@/lib/types";
+import { getCompanySettings } from "@/lib/services/settingsService";
+import { User, Department } from "@/lib/types";
 
 export default function UserManagementContent() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [departmentFilter, setDepartmentFilter] = useState("All");
   const [sortBy, setSortBy] = useState("id");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; user: User | null }>({ isOpen: false, user: null });
@@ -42,18 +45,22 @@ export default function UserManagementContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const userData = await getUsers();
+        const [userData, settingsData] = await Promise.all([
+          getUsers(),
+          getCompanySettings()
+        ]);
         setUsers(userData);
+        setDepartments(settingsData.departments);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchData();
   }, []);
 
   const filteredUsers = users.filter((user) => {
@@ -69,8 +76,16 @@ export default function UserManagementContent() {
     }
     
     // Filter by status
-    if (filter === "All") return true;
-    return user.status === filter;
+    if (filter !== "All" && user.status !== filter) return false;
+    
+    // Filter by department
+    if (departmentFilter !== "All") {
+      const userDept = user.department || user.Department || "";
+      if (departmentFilter === "Unassigned" && userDept !== "") return false;
+      if (departmentFilter !== "Unassigned" && userDept !== departmentFilter) return false;
+    }
+    
+    return true;
   });
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
@@ -153,6 +168,20 @@ export default function UserManagementContent() {
             </select>
           </div>
           <div className="flex items-center space-x-2">
+            <Filter className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <select
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+              className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Departments</option>
+              <option value="Unassigned">Unassigned</option>
+              {departments.map(dept => (
+                <option key={dept.id} value={dept.name}>{dept.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
             <ArrowUpDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <select
               value={sortBy}
@@ -173,16 +202,19 @@ export default function UserManagementContent() {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Employee Name
+                Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
+                Contact
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Department
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Job Title
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Salary
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -208,13 +240,16 @@ export default function UserManagementContent() {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.numericId || "N/A"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.email || "No email"}
+                  {user.email || "No contact"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {user.Department || user.department || "Not Assigned"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {user.jobTitle || "Not Assigned"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                  ${user.salary?.toLocaleString() || "Not Set"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
@@ -269,7 +304,7 @@ export default function UserManagementContent() {
                 />
                 <div>
                   <h3 className="font-medium text-gray-900">{user.name}</h3>
-                  <p className="text-sm text-gray-500">ID: {user.numericId || "N/A"}</p>
+                  <p className="text-sm text-gray-500">{user.jobTitle || "Employee"}</p>
                 </div>
               </div>
               <span
@@ -283,12 +318,20 @@ export default function UserManagementContent() {
             
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Email:</span>
-                <span className="text-gray-900">{user.email || "No email"}</span>
+                <span className="text-gray-500">Contact:</span>
+                <span className="text-gray-900">{user.email || "No contact"}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Department:</span>
                 <span className="text-gray-900">{user.Department || user.department || "Not Assigned"}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Job Title:</span>
+                <span className="text-gray-900">{user.jobTitle || "Not Assigned"}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Salary:</span>
+                <span className="text-gray-900 font-semibold">${user.salary?.toLocaleString() || "Not Set"}</span>
               </div>
             </div>
             

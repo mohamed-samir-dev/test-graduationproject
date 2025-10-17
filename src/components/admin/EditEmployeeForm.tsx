@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { User, Building, Mail, Briefcase, RotateCcw } from "lucide-react";
+import { User, Building, Mail, Briefcase, DollarSign, RotateCcw } from "lucide-react";
 import { getUsers, updateUser } from "@/lib/services/userService";
 import { User as UserType } from "@/lib/types";
 
@@ -16,6 +16,7 @@ export default function EditEmployeeForm() {
     email: "",
     department: "",
     jobTitle: "",
+    salary: "",
     image: "",
   });
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,7 @@ export default function EditEmployeeForm() {
             email: emp.email || "",
             department: emp.department || emp.Department || "",
             jobTitle: emp.jobTitle || "",
+            salary: emp.salary?.toString() || "",
             image: emp.image || "",
           });
         }
@@ -134,6 +136,7 @@ export default function EditEmployeeForm() {
         email: formData.email,
         department: formData.department,
         jobTitle: formData.jobTitle,
+        salary: parseInt(formData.salary),
         image: formData.image,
       });
 
@@ -234,7 +237,7 @@ export default function EditEmployeeForm() {
               </select>
             </div>
 
-            <div className="lg:col-span-2">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Briefcase className="w-4 h-4 inline mr-2" />
                 Job Title
@@ -245,6 +248,21 @@ export default function EditEmployeeForm() {
                 value={formData.jobTitle}
                 onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <DollarSign className="w-4 h-4 inline mr-2" />
+                Salary
+              </label>
+              <input
+                type="number"
+                required
+                value={formData.salary}
+                onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                min="0"
               />
             </div>
           </div>
