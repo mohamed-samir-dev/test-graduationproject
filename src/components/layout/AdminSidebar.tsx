@@ -16,7 +16,6 @@ export default function AdminSidebar({ activeTab, onTabChange, pendingCount, isO
     { id: "Attendance", label: "Attendance", icon: Calendar },
     { id: "Leaves", label: "Leaves", icon: FileText, badge: pendingCount },
     { id: "Reports", label: "Reports", icon: FileText },
-    { id: "Analytics", label: "Analytics", icon: TrendingUp },
     { id: "UserManagement", label: "User Management", icon: Users },
     { id: "Departments", label: "Departments", icon: Building },
     { id: "Settings", label: "Settings", icon: Settings },
