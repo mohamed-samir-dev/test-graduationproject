@@ -43,6 +43,14 @@ export default function DashboardPage() {
     router.push("/leaveRequest");
   };
 
+  const handleSettings = () => {
+    router.push("/profile");
+  };
+
+  const handleReports = () => {
+    // Future implementation
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif]">
       <NavigationBlocker />
@@ -52,9 +60,9 @@ export default function DashboardPage() {
         onUserClick={logout}
         showNavigation
         navigationItems={[
-          { label: "Dashboard", href: "#" },
-          { label: "Reports", href: "#" },
-          { label: "Settings", href: "#" }
+          { label: "Dashboard", onClick: () => router.push("/userData") },
+          { label: "Reports", onClick: handleReports },
+          { label: "Settings", onClick: handleSettings }
         ]}
       />
 

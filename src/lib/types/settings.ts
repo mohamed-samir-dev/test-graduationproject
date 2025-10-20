@@ -33,3 +33,10 @@ export interface CompanySettings {
   departments: Department[];
   attendanceRules: AttendanceRules;
 }
+
+export interface ProfileSettings {
+  attendanceReminders: boolean;
+  leaveStatusUpdates: boolean;
+  systemAnnouncements: boolean;
+  attendanceHistoryVisibility: 'private' | 'team' | 'department' | 'public';
+}

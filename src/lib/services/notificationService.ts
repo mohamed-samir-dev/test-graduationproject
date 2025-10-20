@@ -1,17 +1,50 @@
-import { collection, query, where, getDocs, updateDoc, doc, setDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 export interface Notification {
   id: string;
   employeeId: string;
   message: string;
-  type: 'leave_approved' | 'leave_rejected' | 'vacation_announcement' | 'holiday_updated' | 'holiday_deleted' | 'holiday_expired' | 'working_hours_changed' | 'attendance_rules_changed';
+  type: 'leave_approved' | 'leave_rejected' | 'vacation_announcement' | 'holiday_updated' | 'holiday_deleted' | 'holiday_expired' | 'working_hours_changed' | 'attendance_rules_changed' | 'attendance_reminder';
   isRead: boolean;
   createdAt: string;
 }
 
-export const createNotification = async (employeeId: string, message: string, type: 'leave_approved' | 'leave_rejected' | 'vacation_announcement' | 'holiday_updated' | 'holiday_deleted' | 'holiday_expired' | 'working_hours_changed' | 'attendance_rules_changed'): Promise<void> => {
+const checkUserNotificationPreference = async (employeeId: string, notificationType: string): Promise<boolean> => {
   try {
+    const { getUsers } = await import('./userService');
+    const users = await getUsers();
+    const user = users.find(u => u.numericId?.toString() === employeeId);
+    
+    if (!user) return false;
+    
+    switch (notificationType) {
+      case 'leave_approved':
+      case 'leave_rejected':
+        return user.leaveStatusUpdates ?? false;
+      case 'attendance_reminder':
+        return user.attendanceReminders ?? false;
+      case 'vacation_announcement':
+      case 'holiday_updated':
+      case 'holiday_deleted':
+      case 'holiday_expired':
+      case 'working_hours_changed':
+      case 'attendance_rules_changed':
+        return user.systemAnnouncements ?? false;
+      default:
+        return false;
+    }
+  } catch (error) {
+    console.error("Error checking notification preference:", error);
+    return true;
+  }
+};
+
+export const createNotification = async (employeeId: string, message: string, type: 'leave_approved' | 'leave_rejected' | 'vacation_announcement' | 'holiday_updated' | 'holiday_deleted' | 'holiday_expired' | 'working_hours_changed' | 'attendance_rules_changed' | 'attendance_reminder'): Promise<void> => {
+  try {
+    const shouldNotify = await checkUserNotificationPreference(employeeId, type);
+    if (!shouldNotify) return;
+    
     const timestamp = new Date().getTime();
     const documentId = `notification_${type}_${employeeId}_${timestamp}`;
     const notificationRef = doc(db, "notifications", documentId);
@@ -57,18 +90,13 @@ export const createVacationNotificationForAllEmployees = async (message: string)
     const { getUsers } = await import('./userService');
     const users = await getUsers();
     
-    console.log('Found users:', users.map(u => ({ id: u.id, numericId: u.numericId, name: u.name })));
-    
-    // Filter out admin users and only send to valid employee users
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
-    console.log('Sending notifications to employees:', employees.map(u => ({ numericId: u.numericId, name: u.name })));
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'vacation_announcement')
     );
     
     await Promise.all(notificationPromises);
-    console.log(`Notifications sent to ${employees.length} employees`);
   } catch (error) {
     console.error("Error creating vacation notifications:", error);
     throw new Error("Failed to create vacation notifications");
@@ -79,7 +107,7 @@ export const createHolidayUpdateNotificationForAllEmployees = async (message: st
   try {
     const { getUsers } = await import('./userService');
     const users = await getUsers();
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'holiday_updated')
@@ -96,7 +124,7 @@ export const createHolidayDeleteNotificationForAllEmployees = async (message: st
   try {
     const { getUsers } = await import('./userService');
     const users = await getUsers();
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'holiday_deleted')
@@ -113,7 +141,7 @@ export const createHolidayExpiredNotificationForAllEmployees = async (message: s
   try {
     const { getUsers } = await import('./userService');
     const users = await getUsers();
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'holiday_expired')
@@ -130,7 +158,7 @@ export const createWorkingHoursChangeNotificationForAllEmployees = async (messag
   try {
     const { getUsers } = await import('./userService');
     const users = await getUsers();
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'working_hours_changed')
@@ -147,7 +175,7 @@ export const createAttendanceRulesChangeNotificationForAllEmployees = async (mes
   try {
     const { getUsers } = await import('./userService');
     const users = await getUsers();
-    const employees = users.filter(user => user.numericId !== 1 && user.numericId);
+    const employees = users.filter(user => user.numericId !== 1 && user.numericId && (user.systemAnnouncements ?? false));
     
     const notificationPromises = employees.map(user => 
       createNotification(user.numericId!.toString(), message, 'attendance_rules_changed')
@@ -157,5 +185,30 @@ export const createAttendanceRulesChangeNotificationForAllEmployees = async (mes
   } catch (error) {
     console.error("Error creating attendance rules change notifications:", error);
     throw new Error("Failed to create attendance rules change notifications");
+  }
+};
+
+export const createAttendanceReminder = async (employeeId: string, message: string): Promise<void> => {
+  try {
+    const { getUsers } = await import('./userService');
+    const users = await getUsers();
+    const user = users.find(u => u.numericId?.toString() === employeeId);
+    
+    if (!user || !(user.attendanceReminders ?? false)) return;
+    
+    const timestamp = new Date().getTime();
+    const documentId = `notification_attendance_reminder_${employeeId}_${timestamp}`;
+    const notificationRef = doc(db, "notifications", documentId);
+    
+    await setDoc(notificationRef, {
+      id: documentId,
+      employeeId,
+      message,
+      type: 'attendance_reminder',
+      isRead: false,
+      createdAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Error creating attendance reminder:", error);
   }
 };

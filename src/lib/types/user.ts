@@ -11,4 +11,5 @@ export interface User {
   jobTitle?: string;
   status?: 'Active' | 'OnLeave' | 'Inactive';
   salary?: number;
+  phone?: string;
 }
