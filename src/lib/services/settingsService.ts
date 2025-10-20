@@ -1,22 +1,25 @@
-import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { CompanySettings, Holiday, Department } from "@/lib/types";
 
 export const getCompanySettings = async (): Promise<CompanySettings> => {
   try {
-    const [holidaysSnapshot, departmentsSnapshot] = await Promise.all([
+    const [holidaysSnapshot, departmentsSnapshot, settingsDoc] = await Promise.all([
       getDocs(collection(db, "holidays")),
-      getDocs(collection(db, "departments"))
+      getDocs(collection(db, "departments")),
+      getDoc(doc(db, "settings", "company"))
     ]);
 
     const holidays = holidaysSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Holiday));
     const departments = departmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Department));
+    
+    const settingsData = settingsDoc.exists() ? settingsDoc.data() : {};
 
     return {
-      workingHours: { startTime: "09:00", endTime: "17:00" },
+      workingHours: settingsData.workingHours || { startTime: "09:00", endTime: "17:00" },
       holidays,
       departments,
-      attendanceRules: { gracePeriod: 15 }
+      attendanceRules: settingsData.attendanceRules || { gracePeriod: 15 }
     };
   } catch {
     return {
@@ -110,7 +113,12 @@ export const updateDepartmentEmployeeCount = async (departmentId: string): Promi
 
 export const updateSettings = async (settings: Partial<CompanySettings>): Promise<void> => {
   const settingsRef = doc(db, "settings", "company");
-  await updateDoc(settingsRef, settings);
+  try {
+    await updateDoc(settingsRef, settings);
+  } catch (error) {
+    // If document doesn't exist, create it
+    await setDoc(settingsRef, settings);
+  }
 };
 
 export const updateHoliday = async (holidayId: string, holiday: Partial<Holiday>): Promise<void> => {

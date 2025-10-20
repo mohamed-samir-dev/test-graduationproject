@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Save, X, Edit, Trash2 } from 'lucide-react';
 import { CompanySettings, Holiday } from '@/lib/types';
-import { getCompanySettings, addHoliday, updateHoliday, deleteHoliday } from '@/lib/services/settingsService';
+import { getCompanySettings, addHoliday, updateHoliday, deleteHoliday, updateSettings } from '@/lib/services/settingsService';
 
 
 export default function SettingsContent() {
@@ -99,6 +99,7 @@ export default function SettingsContent() {
 
   const handleSaveWorkingHours = async () => {
     try {
+      await updateSettings({ workingHours });
       const { createWorkingHoursChangeNotificationForAllEmployees } = await import('@/lib/services/notificationService');
       const message = `⏰ Working hours updated: New schedule is ${workingHours.startTime} - ${workingHours.endTime}`;
       await createWorkingHoursChangeNotificationForAllEmployees(message);
@@ -116,6 +117,7 @@ export default function SettingsContent() {
 
   const handleSaveAttendanceRules = async () => {
     try {
+      await updateSettings({ attendanceRules: { gracePeriod } });
       const { createAttendanceRulesChangeNotificationForAllEmployees } = await import('@/lib/services/notificationService');
       const message = `📋 Attendance rules updated: Grace period changed to ${gracePeriod} minutes`;
       await createAttendanceRulesChangeNotificationForAllEmployees(message);
