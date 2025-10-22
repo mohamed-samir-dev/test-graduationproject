@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, BarChart3, Calendar, FileText, Settings, Users, Building, TrendingUp } from "lucide-react";
+import { Shield, BarChart3, Calendar, FileText, Settings, Users, Building } from "lucide-react";
 
 interface AdminSidebarProps {
   activeTab: string;

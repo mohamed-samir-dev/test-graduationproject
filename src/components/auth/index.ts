@@ -1,3 +1,14 @@
-export { default as LoginForm } from './LoginForm';
-export { default as FacialRecognitionButton } from './FacialRecognitionButton';
-export { default as AuthDivider } from './AuthDivider';
+// Forms
+export * from './forms';
+
+// Facial Recognition
+export * from './facial-recognition';
+
+// Common Components
+export * from './common';
+
+// Login Components
+export * from './login';
+
+// Layouts
+export * from './layouts';

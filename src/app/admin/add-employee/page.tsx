@@ -1,26 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
 import NavigationBlocker from "@/components/NavigationBlocker";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import AdminTopBar from "@/components/layout/AdminTopBar";
-import AddEmployeeForm from "@/components/admin/AddEmployeeForm";
-import DashboardContent from "@/components/admin/DashboardContent";
-import AttendanceContent from "@/components/admin/AttendanceContent";
-import LeavesContent from "@/components/admin/LeavesContent";
-import ReportsContent from "@/components/admin/ReportsContent";
-import UserManagementContent from "@/components/admin/UserManagementContent";
-import SettingsContent from "@/components/admin/SettingsContent";
+import { AddEmployeeForm } from "@/components/admin";
 
 export default function AddEmployeePage() {
+  const router = useRouter();
   const { user, mounted, logout } = useAuth();
   const { leaveRequests } = useLeaveRequests();
-  const [activeTab, setActiveTab] = useState("AddEmployee");
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleTabChange = (tab: string) => {
+    router.push(`/admin?tab=${tab}`);
+  };
 
   if (!mounted || !user || user.numericId !== 1) {
     return null;
@@ -31,8 +30,8 @@ export default function AddEmployeePage() {
       <NavigationBlocker />
       
       <AdminSidebar 
-        activeTab={activeTab === "AddEmployee" ? "UserManagement" : activeTab}
-        onTabChange={setActiveTab}
+        activeTab="UserManagement"
+        onTabChange={handleTabChange}
         pendingCount={leaveRequests.filter(req => req.status === "Pending").length}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -51,13 +50,7 @@ export default function AddEmployeePage() {
           onMenuClick={() => setSidebarOpen(true)}
         />
 
-        {activeTab === "AddEmployee" && <AddEmployeeForm />}
-        {activeTab === "Dashboard" && <DashboardContent />}
-        {activeTab === "Attendance" && <AttendanceContent />}
-        {activeTab === "Leaves" && <LeavesContent searchQuery={searchQuery} />}
-        {activeTab === "Reports" && <ReportsContent />}
-        {activeTab === "UserManagement" && <UserManagementContent />}
-        {activeTab === "Settings" && <SettingsContent />}
+        <AddEmployeeForm />
       </div>
     </div>
   );

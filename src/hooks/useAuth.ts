@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DocumentData } from "firebase/firestore";
 import { getUsers } from "@/lib/services/userService";
+import { User } from "@/lib/types";
 
 export function useAuth() {
-  const [user, setUser] = useState<DocumentData | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 

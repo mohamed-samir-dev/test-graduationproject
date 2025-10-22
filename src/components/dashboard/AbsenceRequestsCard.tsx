@@ -1,56 +1,28 @@
 import { useState } from "react";
-import { Calendar, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
-import { LeaveRequest } from "@/lib/types";
+import { getStatusIcon, getStatusColor } from "@/utils/statusHelpers";
 
 export default function AbsenceRequestsCard() {
   const { user } = useAuth();
   const { leaveRequests, loading } = useLeaveRequests();
   const [showAll, setShowAll] = useState(false);
 
-  // Filter requests for current user
-  const userRequests = leaveRequests.filter(request => 
-    request.employeeId === user?.numericId?.toString()
-  );
-
-  const pendingRequests = userRequests.filter(req => req.status === 'Pending');
-  const approvedRequests = userRequests.filter(req => req.status === 'Approved');
+  const userRequests = leaveRequests.filter(r => r.employeeId === user?.numericId?.toString());
+  const pendingRequests = userRequests.filter(r => r.status === 'Pending');
+  const approvedRequests = userRequests.filter(r => r.status === 'Approved');
   const recentRequests = showAll ? userRequests : userRequests.slice(0, 3);
-
-  const getStatusIcon = (status: LeaveRequest['status']) => {
-    switch (status) {
-      case 'Approved':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'Rejected':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <AlertCircle className="w-4 h-4 text-amber-600" />;
-    }
-  };
-
-  const getStatusColor = (status: LeaveRequest['status']) => {
-    switch (status) {
-      case 'Approved':
-        return 'text-green-600 bg-green-50';
-      case 'Rejected':
-        return 'text-red-600 bg-red-50';
-      default:
-        return 'text-amber-600 bg-amber-50';
-    }
-  };
 
   return (
     <div className="bg-white rounded-3xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-            <Calendar className="w-5 h-5 text-purple-600" />
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold text-[#555]">Absence Requests</h4>
-            <div className="text-2xl font-bold text-gray-800 mt-1">{approvedRequests.length}</div>
-          </div>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-full bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
+          <Calendar className="w-5 h-5 text-purple-600" />
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-[#555]">Absence Requests</h4>
+          <div className="text-2xl font-bold text-gray-800 mt-1">{approvedRequests.length}</div>
         </div>
       </div>
 
@@ -71,27 +43,21 @@ export default function AbsenceRequestsCard() {
 
           <div className="space-y-3">
             {recentRequests.length === 0 ? (
-              <div className="text-center py-6 text-gray-500 text-sm">
-                No absence requests found
-              </div>
+              <div className="text-center py-6 text-gray-500 text-sm">No absence requests found</div>
             ) : (
               recentRequests.map((request) => (
                 <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-900">
-                        {request.leaveType}
-                      </span>
+                      <span className="text-sm font-medium text-gray-900">{request.leaveType}</span>
                       <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
                         {getStatusIcon(request.status)}
                         {request.status}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
-                      </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                      <Clock className="w-3 h-3" />
+                      {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
                     </div>
                   </div>
                 </div>

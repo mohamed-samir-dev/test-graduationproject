@@ -1,16 +1,14 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function NavigationBlocker() {
-  const router = useRouter();
 
   useEffect(() => {
     // Push a dummy state to prevent back navigation
     window.history.pushState(null, '', window.location.href);
     
-    const handlePopState = (event: PopStateEvent) => {
+    const handlePopState = () => {
       // Prevent back navigation by pushing forward again
       window.history.pushState(null, '', window.location.href);
     };

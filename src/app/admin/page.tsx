@@ -1,26 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
 import NavigationBlocker from "@/components/NavigationBlocker";
 import AdminSidebar from "@/components/layout/AdminSidebar";
 import AdminTopBar from "@/components/layout/AdminTopBar";
-import DashboardContent from "@/components/admin/DashboardContent";
-import AttendanceContent from "@/components/admin/AttendanceContent";
-import LeavesContent from "@/components/admin/LeavesContent";
-import ReportsContent from "@/components/admin/ReportsContent";
-import UserManagementContent from "@/components/admin/UserManagementContent";
-import SettingsContent from "@/components/admin/SettingsContent";
-import DepartmentsContent from "@/components/admin/DepartmentsContent";
+import DashboardContent from "@/components/admin/dashboard/DashboardContent";
+import AttendanceContent from "@/components/admin/attendance/AttendanceContent";
+import LeavesContent from "@/components/admin/attendance/LeavesContent";
+import ReportsContent from "@/components/admin/reports/ReportsContent";
+import UserManagementContent from "@/components/admin/employee-management/UserManagementContent";
+import SettingsContent from "@/components/admin/settings/main/SettingsContent";
+import DepartmentsContent from "@/components/admin/departments/DepartmentsContent";
 
 export default function AdminDashboard() {
   const { user, mounted, logout } = useAuth();
   const { leaveRequests, loading } = useLeaveRequests();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   if (!mounted || !user || user.numericId !== 1) {
     return null;
@@ -53,6 +62,7 @@ export default function AdminDashboard() {
         onTabChange={(tab) => {
           setActiveTab(tab);
           setSidebarOpen(false);
+          window.history.pushState({}, '', `/admin?tab=${tab}`);
         }}
         pendingCount={pendingCount}
         isOpen={sidebarOpen}
