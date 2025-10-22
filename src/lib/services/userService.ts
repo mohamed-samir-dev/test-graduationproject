@@ -18,7 +18,11 @@ export const createUserWithId = async (userData: Omit<User, 'id' | 'numericId'>)
   const newUser: User = {
     id: documentId,
     numericId,
-    ...userData
+    ...userData,
+    // Set default notification preferences
+    systemAnnouncements: true,
+    leaveStatusUpdates: true,
+    attendanceReminders: true
   };
   
   await setDoc(userRef, newUser);

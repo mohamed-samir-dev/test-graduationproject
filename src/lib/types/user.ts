@@ -12,4 +12,8 @@ export interface User {
   status?: 'Active' | 'OnLeave' | 'Inactive';
   salary?: number;
   phone?: string;
+  // Notification preferences
+  systemAnnouncements?: boolean;
+  leaveStatusUpdates?: boolean;
+  attendanceReminders?: boolean;
 }
