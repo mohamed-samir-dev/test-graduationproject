@@ -5,7 +5,7 @@ import { DocumentData } from "firebase/firestore";
 import Button from "@/components/common/Button";
 import { useProfileForm } from "./hooks/useProfileForm";
 import { usePasswordModal } from "./hooks/usePasswordModal";
-import ProfilePicture from "./ProfilePicture";
+import ProfilePicture, { ProfilePictureRef } from "./ProfilePicture";
 import PersonalInfoForm from "./PersonalInfoForm";
 import NotificationSettings from "./NotificationSettings";
 import PasswordModal from "./PasswordModal";
@@ -19,7 +19,7 @@ interface ProfileSettingsFormProps {
 export default function ProfileSettingsForm({
   user,
 }: ProfileSettingsFormProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const profilePictureRef = useRef<ProfilePictureRef>(null);
   
   const {
     formData,
@@ -72,6 +72,7 @@ export default function ProfileSettingsForm({
             <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
               <div>
                 <ProfilePicture
+                  ref={profilePictureRef}
                   selectedImage={selectedImage}
                   userImage={user.image}
                   userName={user.name}
@@ -141,7 +142,7 @@ export default function ProfileSettingsForm({
         </div>
 
         <ProfileSidebar
-          onUpdatePicture={() => fileInputRef.current?.click()}
+          onUpdatePicture={() => profilePictureRef.current?.triggerFileInput()}
           onChangePassword={() => setShowPasswordModal(true)}
         />
       </div>

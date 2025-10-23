@@ -1,15 +1,23 @@
-import { useRef } from "react";
+import { useRef, forwardRef, useImperativeHandle } from "react";
 import { Camera, Upload } from "lucide-react";
 import Image from "next/image";
 import { ProfilePictureProps } from "@/lib/types";
 
-export default function ProfilePicture({
+export interface ProfilePictureRef {
+  triggerFileInput: () => void;
+}
+
+const ProfilePicture = forwardRef<ProfilePictureRef, ProfilePictureProps>(function ProfilePicture({
   selectedImage,
   userImage,
   userName,
   onImageChange,
-}: ProfilePictureProps) {
+}, ref) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    triggerFileInput: () => fileInputRef.current?.click(),
+  }));
 
   return (
     <div className="mb-6 sm:mb-8">
@@ -60,4 +68,6 @@ export default function ProfilePicture({
       </div>
     </div>
   );
-}
+});
+
+export default ProfilePicture;
