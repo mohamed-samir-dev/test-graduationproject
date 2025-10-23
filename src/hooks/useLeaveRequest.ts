@@ -29,9 +29,31 @@ export function useLeaveRequest() {
     type: 'success', 
     isVisible: false 
   });
+  const [dateError, setDateError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const newFormData = { ...formData, [name]: value };
+    setFormData(newFormData);
+    
+    // Validate dates when either start or end date changes
+    if (name === 'startDate' || name === 'endDate') {
+      validateDates(newFormData.startDate, newFormData.endDate);
+    }
+  };
+
+  const validateDates = (startDate: string, endDate: string) => {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (end < start) {
+        setDateError("End date cannot be before start date");
+      } else {
+        setDateError("");
+      }
+    } else {
+      setDateError("");
+    }
   };
 
   const calculateLeaveDays = (startDate: string, endDate: string): number => {
@@ -43,6 +65,12 @@ export function useLeaveRequest() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, userId: string, userName: string, numericId?: number) => {
     e.preventDefault();
+    
+    // Check for date validation error
+    if (dateError) {
+      setToast({ message: dateError, type: 'error', isVisible: true });
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -76,6 +104,7 @@ export function useLeaveRequest() {
     formData,
     isSubmitting,
     toast,
+    dateError,
     handleChange,
     handleSubmit,
     closeToast

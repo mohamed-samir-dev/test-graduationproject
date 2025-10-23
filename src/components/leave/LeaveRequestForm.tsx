@@ -13,6 +13,7 @@ export default function LeaveRequestForm({
   user, 
   formData, 
   isSubmitting, 
+  dateError,
   onSubmit, 
   onChange, 
   onCancel 
@@ -24,7 +25,7 @@ export default function LeaveRequestForm({
       <div className="p-4 sm:p-8">
         <form onSubmit={onSubmit} className="space-y-6 sm:space-y-8">
           <EmployeeInfoSection user={user} />
-          <LeaveDetailsSection formData={formData} onChange={onChange} />
+          <LeaveDetailsSection formData={formData} onChange={onChange} dateError={dateError} />
           <EmergencyContactSection formData={formData} onChange={onChange} />
           <FormActions isSubmitting={isSubmitting} onCancel={onCancel} />
         </form>

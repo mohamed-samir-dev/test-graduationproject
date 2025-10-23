@@ -8,7 +8,7 @@ import LeaveRequestForm from "@/components/leave/LeaveRequestForm";
 
 export default function LeaveRequestPage() {
   const { user, mounted, logout } = useAuth();
-  const { formData, isSubmitting, toast, handleChange, handleSubmit, closeToast } = useLeaveRequest();
+  const { formData, isSubmitting, toast, dateError, handleChange, handleSubmit, closeToast } = useLeaveRequest();
   const router = useRouter();
 
   if (!mounted || !user) {
@@ -34,6 +34,7 @@ export default function LeaveRequestPage() {
         user={user}
         formData={formData}
         isSubmitting={isSubmitting}
+        dateError={dateError}
         onSubmit={onSubmit}
         onChange={handleChange}
         onCancel={onCancel}

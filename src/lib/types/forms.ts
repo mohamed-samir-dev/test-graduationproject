@@ -18,6 +18,7 @@ export interface LeaveRequestFormProps {
     phoneNumber: string;
   };
   isSubmitting: boolean;
+  dateError?: string;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onCancel: () => void;

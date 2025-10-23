@@ -13,6 +13,7 @@ interface LeaveDetailsSectionProps {
     reason: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  dateError?: string;
 }
 
 const leaveTypeOptions = [
@@ -24,7 +25,7 @@ const leaveTypeOptions = [
   { value: "Paternity Leave", label: "Paternity Leave" }
 ];
 
-export default function LeaveDetailsSection({ formData, onChange }: LeaveDetailsSectionProps) {
+export default function LeaveDetailsSection({ formData, onChange, dateError }: LeaveDetailsSectionProps) {
   const today = new Date().toISOString().split('T')[0];
   
   const calculateDays = () => {
@@ -75,6 +76,11 @@ export default function LeaveDetailsSection({ formData, onChange }: LeaveDetails
           </div>
         </div>
       </div>
+      {dateError && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm font-medium">{dateError}</p>
+        </div>
+      )}
       <div className="mt-6">
         <FormSelect
           label="Type of Leave"
