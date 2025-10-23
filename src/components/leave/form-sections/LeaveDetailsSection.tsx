@@ -25,12 +25,24 @@ const leaveTypeOptions = [
 ];
 
 export default function LeaveDetailsSection({ formData, onChange }: LeaveDetailsSectionProps) {
+  const today = new Date().toISOString().split('T')[0];
+  
+  const calculateDays = () => {
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      const timeDiff = end.getTime() - start.getTime();
+      return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+    }
+    return 0;
+  };
+  
   return (
     <div>
       <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
         Leave Details
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <FormInput
           label="Start Date"
           name="startDate"
@@ -38,6 +50,7 @@ export default function LeaveDetailsSection({ formData, onChange }: LeaveDetails
           value={formData.startDate}
           icon={Calendar}
           required
+          min={today}
           onChange={onChange}
         />
         <FormInput
@@ -47,8 +60,20 @@ export default function LeaveDetailsSection({ formData, onChange }: LeaveDetails
           value={formData.endDate}
           icon={Calendar}
           required
+          min={today}
           onChange={onChange}
         />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Number of Days
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 bg-gray-50">
+            <Calendar className="text-gray-400 mr-3" size={20} />
+            <span className="w-full text-gray-800 font-semibold">
+              {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
+            </span>
+          </div>
+        </div>
       </div>
       <div className="mt-6">
         <FormSelect

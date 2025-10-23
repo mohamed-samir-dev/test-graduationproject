@@ -40,6 +40,26 @@ export const updateLeaveRequestStatus = async (requestId: string, status: 'Pendi
       status,
       updatedAt: new Date().toISOString()
     });
+    
+    // If approved, add to leave days taken collection
+    if (status === 'Approved') {
+      const leaveRequests = await getLeaveRequests();
+      const request = leaveRequests.find(req => req.id === requestId);
+      
+      if (request) {
+        const { addLeaveDaysRecord } = await import('./leaveDaysService');
+        await addLeaveDaysRecord({
+          employeeId: request.employeeId,
+          employeeName: request.employeeName,
+          leaveRequestId: request.id,
+          leaveDays: request.leaveDays,
+          leaveType: request.leaveType,
+          startDate: request.startDate,
+          endDate: request.endDate,
+          approvedAt: new Date().toISOString()
+        });
+      }
+    }
   } catch (error) {
     console.error("Error updating leave request status:", error);
     throw new Error("Failed to update leave request status");

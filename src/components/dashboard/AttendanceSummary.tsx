@@ -1,7 +1,7 @@
 import { Clock, AlertTriangle, XCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useLeaveRequests } from "@/hooks/useLeaveRequests";
 import { SummaryCardProps } from "@/lib/types";
+import { useLeaveDays } from "@/hooks/useLeaveDays";
 import AbsenceRequestsCard from "./AbsenceRequestsCard";
 
 function SummaryCard({ title, value, color = "blue", icon }: SummaryCardProps) {
@@ -38,11 +38,7 @@ function SummaryCard({ title, value, color = "blue", icon }: SummaryCardProps) {
 
 export default function AttendanceSummary() {
   const { user } = useAuth();
-  const { leaveRequests } = useLeaveRequests();
-  
-  const userAbsences = leaveRequests.filter(req => 
-    req.employeeId === user?.numericId?.toString() && req.status === 'Approved'
-  ).length;
+  const { leaveDays: userLeaveDays } = useLeaveDays(user?.numericId?.toString());
 
   return (
     <div className="mb-8">
@@ -60,8 +56,8 @@ export default function AttendanceSummary() {
           icon={<AlertTriangle className="w-5 h-5" />} 
         />
         <SummaryCard 
-          title="Absences" 
-          value={userAbsences}
+          title="Leave Days Taken" 
+          value={userLeaveDays}
           color="red" 
           icon={<XCircle className="w-5 h-5" />} 
         />

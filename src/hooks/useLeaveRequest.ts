@@ -34,17 +34,27 @@ export function useLeaveRequest() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const calculateLeaveDays = (startDate: string, endDate: string): number => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const timeDiff = end.getTime() - start.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end dates
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, userId: string, userName: string, numericId?: number) => {
     e.preventDefault();
     
     setIsSubmitting(true);
     try {
+      const leaveDays = calculateLeaveDays(formData.startDate, formData.endDate);
+      
       await submitLeaveRequest({
         employeeId: numericId?.toString() || userId,
         employeeName: userName,
         leaveType: formData.leaveType as LeaveType,
         startDate: formData.startDate,
         endDate: formData.endDate,
+        leaveDays,
         reason: formData.reason,
         status: 'Pending'
       });

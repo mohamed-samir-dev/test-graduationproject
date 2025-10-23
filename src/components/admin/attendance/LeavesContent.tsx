@@ -50,6 +50,13 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
       }
       
       refetch();
+      
+      // Trigger leave days refresh after all database operations complete
+      if (status === 'Approved' && request) {
+        console.log('Dispatching leaveDaysUpdated event for employee:', request.employeeId);
+        window.dispatchEvent(new CustomEvent('leaveDaysUpdated', { detail: { employeeId: request.employeeId } }));
+      }
+      
       const adminMessage = status === 'Approved' 
         ? `✅ ${request?.employeeName}'s leave request has been approved successfully!`
         : `❌ ${request?.employeeName}'s leave request has been rejected.`;

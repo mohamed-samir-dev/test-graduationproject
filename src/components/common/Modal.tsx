@@ -48,7 +48,7 @@ export default function Modal({ isOpen, onClose, request, onStatusUpdate }: Moda
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Start Date</label>
               <p className="text-gray-900">{new Date(request.startDate).toLocaleDateString()}</p>
@@ -56,6 +56,10 @@ export default function Modal({ isOpen, onClose, request, onStatusUpdate }: Moda
             <div>
               <label className="text-sm font-medium text-gray-500">End Date</label>
               <p className="text-gray-900">{new Date(request.endDate).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500">Leave Days</label>
+              <p className="text-gray-900 font-semibold">{request.leaveDays} {request.leaveDays === 1 ? 'day' : 'days'}</p>
             </div>
           </div>
           
