@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { initializeUserAccountTypes } from "@/lib/services/initializeUserData";
 
 export function useProfile() {
   const { user, mounted, logout, refreshUserData } = useAuth();
@@ -9,6 +10,15 @@ export function useProfile() {
   useEffect(() => {
     if (mounted && user && refreshUserData) {
       refreshUserData();
+      
+      // Initialize account types for existing users (run once)
+      const hasInitialized = localStorage.getItem('accountTypesInitialized');
+      if (!hasInitialized) {
+        initializeUserAccountTypes().then(() => {
+          localStorage.setItem('accountTypesInitialized', 'true');
+          refreshUserData();
+        });
+      }
     }
   }, [mounted, user, refreshUserData]);
 

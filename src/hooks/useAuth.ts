@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { getUsers } from "@/lib/services/userService";
 import { User } from "@/lib/types";
 
+// cspell:ignore Firestore
+type FirestoreTimestamp = { toDate(): Date };
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -29,6 +32,14 @@ export function useAuth() {
         const users = await getUsers();
         const updatedUser = users.find(u => u.id === user.id);
         if (updatedUser) {
+          // Convert Firestore timestamps to Date objects
+          if (updatedUser.lastLogin && typeof (updatedUser.lastLogin as unknown as FirestoreTimestamp).toDate === 'function') {
+            updatedUser.lastLogin = (updatedUser.lastLogin as unknown as FirestoreTimestamp).toDate();
+          }
+          if (updatedUser.sessionStartTime && typeof (updatedUser.sessionStartTime as unknown as FirestoreTimestamp).toDate === 'function') {
+            updatedUser.sessionStartTime = (updatedUser.sessionStartTime as unknown as FirestoreTimestamp).toDate();
+          }
+          
           setUser(updatedUser);
           sessionStorage.setItem("attendanceUser", JSON.stringify(updatedUser));
         }

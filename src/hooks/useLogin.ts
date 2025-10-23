@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { LoginFormData } from "@/lib/types";
+import { updateUserSession } from "@/lib/services/sessionService";
 
 export function useLogin() {
   const [error, setError] = useState("");
@@ -25,7 +26,11 @@ export function useLogin() {
 
       if (!snapshot.empty) {
         const userData = snapshot.docs[0].data();
+        const userId = snapshot.docs[0].id;
         const currentTime = new Date().getTime();
+
+        // Update user session in Firebase
+        await updateUserSession(userId);
 
         if (typeof window !== "undefined") {
           sessionStorage.setItem("attendanceUser", JSON.stringify(userData));

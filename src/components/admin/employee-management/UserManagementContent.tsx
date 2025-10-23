@@ -29,7 +29,8 @@ export default function UserManagementContent() {
     handleDeleteConfirm,
     handleDeleteCancel,
     handleEdit,
-    getStatusColor
+    getStatusColor,
+    getStatusText
   } = useUserManagement();
 
   if (loading) {
@@ -74,6 +75,7 @@ export default function UserManagementContent() {
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
         getStatusColor={getStatusColor}
+        getStatusText={getStatusText}
       />
 
       <UserCards
@@ -82,6 +84,7 @@ export default function UserManagementContent() {
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
         getStatusColor={getStatusColor}
+        getStatusText={getStatusText}
       />
 
       <DeleteModal

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import { DocumentData } from "firebase/firestore";
 import Button from "@/components/common/Button";
 import { useProfileForm } from "./hooks/useProfileForm";
 import { usePasswordModal } from "./hooks/usePasswordModal";
@@ -11,9 +10,10 @@ import NotificationSettings from "./NotificationSettings";
 import PasswordModal from "./PasswordModal";
 import ProfileSidebar from "./ProfileSidebar";
 import SuccessNotifications from "./SuccessNotifications";
+import { User } from "@/lib/types";
 
 interface ProfileSettingsFormProps {
-  user: DocumentData;
+  user: User;
 }
 
 export default function ProfileSettingsForm({
@@ -81,8 +81,8 @@ export default function ProfileSettingsForm({
 
                 <PersonalInfoForm
                   formData={formData}
-                  userPassword={user.password}
-                  userNumericId={user.numericId}
+                  userPassword={user.password || ""}
+                  userNumericId={user.numericId?.toString() || ""}
                   onInputChange={handleInputChange}
                   onPasswordModalOpen={() => setShowPasswordModal(true)}
                 />
@@ -142,6 +142,7 @@ export default function ProfileSettingsForm({
         </div>
 
         <ProfileSidebar
+          user={user}
           onUpdatePicture={() => profilePictureRef.current?.triggerFileInput()}
           onChangePassword={() => setShowPasswordModal(true)}
         />

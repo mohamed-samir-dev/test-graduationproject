@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, query, where, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 export interface LeaveDaysRecord {
@@ -32,4 +32,13 @@ export const getUserLeaveDays = async (employeeId: string): Promise<number> => {
     const data = doc.data() as LeaveDaysRecord;
     return total + data.leaveDays;
   }, 0);
+};
+
+export const deleteLeaveDaysRecord = async (leaveRequestId: string): Promise<void> => {
+  const leaveDaysCollection = collection(db, "leaveDaysTaken");
+  const q = query(leaveDaysCollection, where("leaveRequestId", "==", leaveRequestId));
+  const snapshot = await getDocs(q);
+  
+  const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+  await Promise.all(deletePromises);
 };

@@ -68,8 +68,21 @@ export const updateLeaveRequestStatus = async (requestId: string, status: 'Pendi
 
 export const deleteLeaveRequest = async (requestId: string): Promise<void> => {
   try {
+    // Get the leave request to find the employee ID
+    const leaveRequests = await getLeaveRequests();
+    const request = leaveRequests.find(req => req.id === requestId);
+    
+    // If the request was approved, delete the corresponding leave days record first
+    if (request && request.status === 'Approved') {
+      const { deleteLeaveDaysRecord } = await import('./leaveDaysService');
+      await deleteLeaveDaysRecord(requestId);
+    }
+    
+    // Delete the leave request
     const requestRef = doc(db, "leaveRequests", requestId);
     await deleteDoc(requestRef);
+    
+    return request; // Return the request data for the component to handle UI updates
   } catch (error) {
     console.error("Error deleting leave request:", error);
     throw new Error("Failed to delete leave request");

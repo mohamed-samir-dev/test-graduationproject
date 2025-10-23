@@ -13,6 +13,7 @@ export interface AttendanceStats {
   presentToday: number;
   absentToday: number;
   lateToday: number;
+  onLeaveToday?: number;
 }
 
 export interface DepartmentStats extends AttendanceStats {

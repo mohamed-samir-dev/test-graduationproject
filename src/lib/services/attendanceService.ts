@@ -16,7 +16,7 @@ export const getTodayAttendance = async (): Promise<AttendanceRecord[]> => {
   try {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AttendanceRecord));
-  } catch (error) {
+  } catch {
     // If no attendance records exist, return empty array
     return [];
   }
@@ -25,25 +25,46 @@ export const getTodayAttendance = async (): Promise<AttendanceRecord[]> => {
 export const getAttendanceStats = async (): Promise<AttendanceStats> => {
   const users = await getUsers();
   const todayAttendance = await getTodayAttendance();
+  const leaveRequests = await getLeaveRequests();
   
+  const today = new Date().toISOString().split('T')[0];
   const totalMembers = users.filter(user => user.numericId !== 1).length; // Exclude admin
+  
+  // Get users on approved leave today
+  const usersOnLeave = leaveRequests.filter(req => 
+    req.status === 'Approved' && 
+    req.startDate <= today && 
+    req.endDate >= today
+  ).map(req => req.employeeId);
+  
   const presentToday = todayAttendance.filter(record => record.status === 'Present').length;
-  const absentToday = totalMembers - presentToday;
   const lateToday = todayAttendance.filter(record => record.status === 'Late').length;
+  const onLeaveToday = usersOnLeave.length;
+  const absentToday = totalMembers - presentToday - lateToday - onLeaveToday;
   
   return {
     totalMembers,
-    presentToday,
+    presentToday: presentToday + lateToday, // Include late as present
     absentToday,
-    lateToday
+    lateToday,
+    onLeaveToday
   };
 };
 
 export const getDepartmentStats = async (): Promise<DepartmentStats[]> => {
   const users = await getUsers();
   const todayAttendance = await getTodayAttendance();
+  const leaveRequests = await getLeaveRequests();
   
+  const today = new Date().toISOString().split('T')[0];
   const departments = ['IT', 'HR', 'Finance', 'Marketing', 'Sales'];
+  
+  // Get users on approved leave today
+  const usersOnLeave = leaveRequests.filter(req => 
+    req.status === 'Approved' && 
+    req.startDate <= today && 
+    req.endDate >= today
+  ).map(req => req.employeeId);
   
   return departments.map(dept => {
     const deptUsers = users.filter(user => 
@@ -54,17 +75,19 @@ export const getDepartmentStats = async (): Promise<DepartmentStats[]> => {
       deptUsers.some(user => user.id === record.userId)
     );
     
+    const deptUsersOnLeave = deptUsers.filter(user => usersOnLeave.includes(user.id)).length;
     const totalMembers = deptUsers.length;
     const presentToday = deptAttendance.filter(record => record.status === 'Present').length;
-    const absentToday = totalMembers - presentToday;
     const lateToday = deptAttendance.filter(record => record.status === 'Late').length;
+    const absentToday = totalMembers - presentToday - lateToday - deptUsersOnLeave;
     
     return {
       department: dept,
       totalMembers,
-      presentToday,
+      presentToday: presentToday + lateToday, // Include late as present
       absentToday,
-      lateToday
+      lateToday,
+      onLeaveToday: deptUsersOnLeave
     };
   });
 };
@@ -87,7 +110,7 @@ export const getAbsenceReasons = async (): Promise<AbsenceReason[]> => {
       count,
       percentage: Math.round((count / total) * 100)
     })).sort((a, b) => b.count - a.count);
-  } catch (error) {
+  } catch {
     return [
       { reason: 'Sick Leave', count: 12, percentage: 60 },
       { reason: 'Personal Day', count: 5, percentage: 25 },

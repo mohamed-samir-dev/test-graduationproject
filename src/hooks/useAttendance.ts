@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { detectFace } from "@/utils/faceDetection";
+import { updateUserSession } from "@/lib/services/sessionService";
 
 export function useAttendance() {
   const [attendanceMarked, setAttendanceMarked] = useState(false);
@@ -21,6 +22,13 @@ export function useAttendance() {
       if (result.success && result.face_detected) {
         setAttendanceMarked(true);
         stopCamera();
+        
+        // Update user session
+        const savedUser = sessionStorage.getItem("attendanceUser");
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          await updateUserSession(user.id);
+        }
         
         if (typeof window !== "undefined") {
           const currentHours = parseInt(localStorage.getItem("totalHoursWorked") || "0");

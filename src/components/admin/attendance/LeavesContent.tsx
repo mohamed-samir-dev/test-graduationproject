@@ -71,6 +71,20 @@ export default function LeavesContent({ searchQuery }: LeavesContentProps) {
       try {
         await deleteLeaveRequest(deleteRequest.id);
         refetch();
+        
+        // Send notification to employee and trigger leave days refresh if approved
+        const notificationMessage = `Your leave request has been cancelled.`;
+        
+        await createNotification(
+          deleteRequest.employeeId,
+          notificationMessage,
+          'leave_rejected'
+        );
+        
+        if (deleteRequest.status === 'Approved') {
+          window.dispatchEvent(new CustomEvent('leaveDaysUpdated', { detail: { employeeId: deleteRequest.employeeId } }));
+        }
+        
         setToast({ message: `✅ ${deleteRequest.employeeName}'s leave request has been deleted successfully!`, type: 'success', isVisible: true });
         setIsDeleteModalOpen(false);
         setDeleteRequest(null);

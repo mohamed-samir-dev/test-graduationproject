@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUsers, deleteUser } from '@/lib/services/userService';
 import { getCompanySettings } from '@/lib/services/settingsService';
+import { isEmployeeOnLeave } from '@/lib/services/leaveStatusService';
 import { User, Department } from '@/lib/types';
 
 export function useUserManagement() {
@@ -25,7 +26,22 @@ export function useUserManagement() {
           getUsers(),
           getCompanySettings()
         ]);
-        setUsers(userData);
+        
+        // Check leave status for each user
+        const usersWithLeaveStatus = await Promise.all(
+          userData.map(async (user) => {
+            if (user.numericId && user.numericId !== 1) {
+              const onLeave = await isEmployeeOnLeave(user.numericId.toString());
+              return {
+                ...user,
+                status: onLeave ? 'OnLeave' : (user.status || 'Active')
+              };
+            }
+            return user;
+          })
+        );
+        
+        setUsers(usersWithLeaveStatus);
         setDepartments(settingsData.departments);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -114,6 +130,15 @@ export function useUserManagement() {
     }
   };
 
+  const getStatusText = (status?: string) => {
+    switch (status) {
+      case "OnLeave":
+        return "On Leave";
+      default:
+        return status || "Active";
+    }
+  };
+
   return {
     users: sortedUsers,
     departments,
@@ -132,6 +157,7 @@ export function useUserManagement() {
     handleDeleteConfirm,
     handleDeleteCancel,
     handleEdit,
-    getStatusColor
+    getStatusColor,
+    getStatusText
   };
 }

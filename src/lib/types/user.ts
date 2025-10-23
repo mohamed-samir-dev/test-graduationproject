@@ -12,6 +12,11 @@ export interface User {
   status?: 'Active' | 'OnLeave' | 'Inactive';
   salary?: number;
   phone?: string;
+  // Session data
+  lastLogin?: Date;
+  isActive?: boolean;
+  sessionStartTime?: Date;
+  accountType?: 'Employee' | 'Admin' | 'Manager';
   // Notification preferences
   systemAnnouncements?: boolean;
   leaveStatusUpdates?: boolean;

@@ -10,9 +10,10 @@ interface UserTableProps {
   onEdit: (userId: string) => void;
   onDelete: (user: User) => void;
   getStatusColor: (status?: string) => string;
+  getStatusText: (status?: string) => string;
 }
 
-export default function UserTable({ users, deleting, onEdit, onDelete, getStatusColor }: UserTableProps) {
+export default function UserTable({ users, deleting, onEdit, onDelete, getStatusColor, getStatusText }: UserTableProps) {
   if (users.length === 0) {
     return (
       <div className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -86,7 +87,7 @@ export default function UserTable({ users, deleting, onEdit, onDelete, getStatus
                     user.status
                   )}`}
                 >
-                  {user.status || "Active"}
+                  {getStatusText(user.status)}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

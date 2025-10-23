@@ -10,9 +10,10 @@ interface UserCardsProps {
   onEdit: (userId: string) => void;
   onDelete: (user: User) => void;
   getStatusColor: (status?: string) => string;
+  getStatusText: (status?: string) => string;
 }
 
-export default function UserCards({ users, deleting, onEdit, onDelete, getStatusColor }: UserCardsProps) {
+export default function UserCards({ users, deleting, onEdit, onDelete, getStatusColor, getStatusText }: UserCardsProps) {
   if (users.length === 0) {
     return (
       <div className="lg:hidden">
@@ -46,7 +47,7 @@ export default function UserCards({ users, deleting, onEdit, onDelete, getStatus
                 user.status
               )}`}
             >
-              {user.status || "Active"}
+              {getStatusText(user.status)}
             </span>
           </div>
           
