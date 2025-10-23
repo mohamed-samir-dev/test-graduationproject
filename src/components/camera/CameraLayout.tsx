@@ -4,12 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCamera } from "@/hooks/useCamera";
 import Navbar from "@/components/layout/Navbar";
 import NavigationBlocker from "@/components/NavigationBlocker";
-import { User } from "@/lib/types";
-
-interface CameraLayoutProps {
-  user: User;
-  children: React.ReactNode;
-}
+import { CameraLayoutProps } from "@/lib/types";
 
 export default function CameraLayout({ user, children }: CameraLayoutProps) {
   const { cameraActive, stopCamera } = useCamera();

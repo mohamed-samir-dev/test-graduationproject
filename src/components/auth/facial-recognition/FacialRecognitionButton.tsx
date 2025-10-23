@@ -1,11 +1,7 @@
 "use client";
 
 import { Camera } from "lucide-react";
-
-interface FacialRecognitionButtonProps {
-  onClick: () => void;
-  loading?: boolean;
-}
+import { FacialRecognitionButtonProps } from "@/lib/types";
 
 export default function FacialRecognitionButton({ onClick, loading = false }: FacialRecognitionButtonProps) {
   return (

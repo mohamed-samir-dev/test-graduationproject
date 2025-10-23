@@ -1,16 +1,8 @@
-'use client';
+"use client";
 
-import NextImage from 'next/image';
-import { Camera, Plus } from 'lucide-react';
-
-interface FormData {
-  name: string;
-  email: string;
-  department: string;
-  jobTitle: string;
-  salary: string;
-  image: string;
-}
+import NextImage from "next/image";
+import { Camera, Plus } from "lucide-react";
+import { FormData } from "@/lib/types/addemployee";
 
 interface PhotoUploadSectionProps {
   formData: FormData;
@@ -27,7 +19,7 @@ export default function PhotoUploadSection({
   imageOption,
   setImageOption,
   photoError,
-  onFileUpload
+  onFileUpload,
 }: PhotoUploadSectionProps) {
   return (
     <div>
@@ -91,9 +83,7 @@ export default function PhotoUploadSection({
         <input
           type="url"
           value={formData.image}
-          onChange={(e) =>
-            setFormData({ ...formData, image: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black mb-4"
           placeholder="https://example.com/photo.jpg"
         />
@@ -110,10 +100,8 @@ export default function PhotoUploadSection({
           />
         </div>
       )}
-      
-      {photoError && (
-        <p className="text-red-600 text-sm mt-2">{photoError}</p>
-      )}
+
+      {photoError && <p className="text-red-600 text-sm mt-2">{photoError}</p>}
     </div>
   );
 }

@@ -1,8 +1,4 @@
-interface CircularProgressProps {
-  percentage: number;
-  total: number;
-  present: number;
-}
+import { CircularProgressProps } from '@/lib/types';
 
 export default function CircularProgress({ percentage, present }: CircularProgressProps) {
   const radius = 45;

@@ -1,15 +1,8 @@
 'use client';
 
 import { User, Building, Mail, Briefcase, DollarSign } from 'lucide-react';
+import {FormData} from "@/lib/types/addemployee"
 
-interface FormData {
-  name: string;
-  email: string;
-  department: string;
-  jobTitle: string;
-  salary: string;
-  image: string;
-}
 
 interface EditFormFieldsProps {
   formData: FormData;

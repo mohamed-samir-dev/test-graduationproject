@@ -1,10 +1,4 @@
-import { ReactNode } from "react";
-
-interface CardProps {
-  children: ReactNode;
-  className?: string;
-  padding?: "sm" | "md" | "lg";
-}
+import { CardProps } from "@/lib/types";
 
 export default function Card({ children, className = "", padding = "md" }: CardProps) {
   const paddingClasses = {

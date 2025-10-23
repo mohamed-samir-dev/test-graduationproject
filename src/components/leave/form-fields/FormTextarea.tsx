@@ -1,13 +1,6 @@
 "use client";
 
-interface FormTextareaProps {
-  label: string;
-  name: string;
-  value: string;
-  placeholder?: string;
-  rows?: number;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-}
+import { FormTextareaProps } from "@/lib/types";
 
 export default function FormTextarea({
   label,

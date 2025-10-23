@@ -1,12 +1,8 @@
 "use client";
 
 import { User } from "lucide-react";
-import { User as UserType } from "@/lib/types";
+import { EmployeeInfoSectionProps } from "@/lib/types";
 import FormInput from "../form-fields/FormInput";
-
-interface EmployeeInfoSectionProps {
-  user: UserType;
-}
 
 export default function EmployeeInfoSection({ user }: EmployeeInfoSectionProps) {
   return (

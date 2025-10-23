@@ -1,16 +1,5 @@
-interface CameraControlsProps {
-  cameraActive: boolean;
-  attendanceMarked: boolean;
-  isProcessing: boolean;
-  error: string;
-  exhaustedAttempts: boolean;
-  attemptsRemaining: number;
-  multipleFaces: boolean;
-  onStartCamera: () => void;
-  onCaptureAndDetect: () => void;
-  onRetry: () => void;
-}
 
+import {CameraControlsProps}from "@/lib/types/camera"
 export default function CameraControls({
   cameraActive,
   attendanceMarked,

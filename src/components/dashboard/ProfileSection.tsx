@@ -3,14 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Calendar, Camera } from "lucide-react";
-import { DocumentData } from "firebase/firestore";
 import { getUsers, updateUserDepartment } from "@/lib/services/userService";
-
-interface ProfileSectionProps {
-  user: DocumentData;
-  onRequestLeave?: () => void;
-  onTakePhoto: () => void;
-}
+import { ProfileSectionProps } from "@/lib/types";
 
 export default function ProfileSection({
   user,

@@ -3,23 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Bell, Menu, X } from "lucide-react";
-import { DocumentData } from "firebase/firestore";
 import AppLogo from "./AppLogo";
 import { useNotifications } from "@/hooks/useNotifications";
 import { markAsRead } from "@/lib/services/notificationService";
 import Toast from "@/components/common/Toast";
-
-interface NavbarProps {
-  user?: DocumentData | null;
-  title?: string;
-  onUserClick?: () => void;
-  showNavigation?: boolean;
-  navigationItems?: Array<{
-    label: string;
-    href: string;
-    onClick?: () => void;
-  }>;
-}
+import { NavbarProps } from "@/lib/types";
 
 export default function Navbar({ 
   user, 

@@ -28,7 +28,7 @@ export default function DeleteConfirmModal({ department, onConfirm, onCancel }: 
         </div>
         <p className="text-gray-700 mb-6">
           Are you sure you want to delete{" "}
-          <strong>"{department.name}"</strong>?
+          <strong>&ldquo;{department.name}&rdquo;</strong>?
         </p>
         <div className="flex gap-3">
           <button

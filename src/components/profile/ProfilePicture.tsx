@@ -1,13 +1,7 @@
 import { useRef } from "react";
 import { Camera, Upload } from "lucide-react";
 import Image from "next/image";
-
-interface ProfilePictureProps {
-  selectedImage: string | null;
-  userImage: string;
-  userName: string;
-  onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
+import { ProfilePictureProps } from "@/lib/types";
 
 export default function ProfilePicture({
   selectedImage,

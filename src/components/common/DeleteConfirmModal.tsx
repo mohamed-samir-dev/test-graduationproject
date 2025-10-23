@@ -1,11 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
-
-interface DeleteConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  employeeName: string;
-}
+import { DeleteConfirmModalProps } from '@/lib/types';
 
 export default function DeleteConfirmModal({ isOpen, onClose, onConfirm, employeeName }: DeleteConfirmModalProps) {
   if (!isOpen) return null;

@@ -2,20 +2,7 @@
 
 import Image from "next/image";
 import { Bell, Search, Menu } from "lucide-react";
-import { DocumentData } from "firebase/firestore";
-import { LeaveRequest } from "@/lib/types";
-
-interface AdminTopBarProps {
-  user: DocumentData;
-  onLogout: () => void;
-  showNotifications: boolean;
-  onToggleNotifications: () => void;
-  pendingRequests: LeaveRequest[];
-  onViewRequest: (request: LeaveRequest) => void;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  onMenuClick: () => void;
-}
+import { AdminTopBarProps } from "@/lib/types";
 
 export default function AdminTopBar({
   user,

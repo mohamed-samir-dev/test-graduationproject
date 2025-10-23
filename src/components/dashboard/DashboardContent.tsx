@@ -3,13 +3,7 @@
 import ProfileSection from "./ProfileSection";
 import AttendanceSummary from "./AttendanceSummary";
 import AttendanceChart from "./AttendanceChart";
-import { User } from "@/lib/types";
-
-interface DashboardContentProps {
-  user: User;
-  onTakeAttendance: () => void;
-  onRequestLeave: () => void;
-}
+import { DashboardContentProps } from "@/lib/types";
 
 export default function DashboardContent({
   user,

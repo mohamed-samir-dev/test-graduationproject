@@ -1,9 +1,4 @@
-interface MetricCardProps {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  color: string;
-}
+import { MetricCardProps } from '@/lib/types';
 
 export default function MetricCard({ title, value, icon, color }: MetricCardProps) {
   return (

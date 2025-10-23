@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { Bell, Check, X } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { markAsRead } from '@/lib/services/notificationService';
-
-interface NotificationBellProps {
-  employeeId: string;
-}
+import { NotificationBellProps } from '@/lib/types';
 
 export default function NotificationBell({ employeeId }: NotificationBellProps) {
   const { notifications, refetch } = useNotifications(employeeId);

@@ -1,15 +1,8 @@
 'use client';
 
-import { User } from '@/lib/types';
+import { User, } from '@/lib/types';
+import {NewDepartment} from "@/lib/types/dapartment"
 
-interface NewDepartment {
-  name: string;
-  head: string;
-  headId: string;
-  description: string;
-  budget: string;
-  location: string;
-}
 
 interface AddDepartmentFormProps {
   newDepartment: NewDepartment;

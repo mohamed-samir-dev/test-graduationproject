@@ -1,12 +1,5 @@
 import { X } from 'lucide-react';
-import { LeaveRequest } from '@/lib/types';
-
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  request: LeaveRequest | null;
-  onStatusUpdate: (id: string, status: 'Approved' | 'Rejected') => void;
-}
+import { ModalProps } from '@/lib/types';
 
 export default function Modal({ isOpen, onClose, request, onStatusUpdate }: ModalProps) {
   if (!isOpen || !request) return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { User as UserType } from "@/lib/types";
+import { LeaveRequestFormProps } from "@/lib/types";
 import {
   FormHeader,
   EmployeeInfoSection,
@@ -8,22 +8,6 @@ import {
   EmergencyContactSection,
   FormActions
 } from "./form-sections";
-
-interface LeaveRequestFormProps {
-  user: UserType;
-  formData: {
-    startDate: string;
-    endDate: string;
-    leaveType: string;
-    reason: string;
-    contactName: string;
-    phoneNumber: string;
-  };
-  isSubmitting: boolean;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-  onCancel: () => void;
-}
 
 export default function LeaveRequestForm({ 
   user, 

@@ -4,16 +4,7 @@ import { LoginForm } from "../forms";
 import { AuthDivider } from "../common";
 import { FacialRecognitionButton } from "../facial-recognition";
 import Card from "@/components/common/Card";
-import { LoginFormData } from "@/lib/types";
-
-interface LoginContainerProps {
-  onLogin: (formData: LoginFormData) => Promise<void>;
-  onFacialRecognition: () => void;
-  onClearSession: () => void;
-  loading: boolean;
-  faceLoading: boolean;
-  error: string;
-}
+import { LoginContainerProps } from "@/lib/types";
 
 export default function LoginContainer({
   onLogin,

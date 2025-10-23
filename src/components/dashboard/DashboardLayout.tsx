@@ -2,16 +2,7 @@
 
 import Navbar from "@/components/layout/Navbar";
 import NavigationBlocker from "@/components/NavigationBlocker";
-import { User } from "@/lib/types";
-
-interface DashboardLayoutProps {
-  user: User;
-  onLogout: () => void;
-  onDashboard: () => void;
-  onReports: () => void;
-  onSettings: () => void;
-  children: React.ReactNode;
-}
+import { DashboardLayoutProps } from "@/lib/types";
 
 export default function DashboardLayout({
   user,

@@ -3,15 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithId } from '@/lib/services/userService';
+import {FormData} from "@/lib/types/addemployee"
 
-export interface FormData {
-  name: string;
-  email: string;
-  department: string;
-  jobTitle: string;
-  salary: string;
-  image: string;
-}
+
 
 export function useAddEmployee() {
   const router = useRouter();

@@ -2,15 +2,7 @@
 
 import { CheckCircle, Copy } from "lucide-react";
 import { useState } from "react";
-
-interface SuccessModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  employeeName: string;
-  username: string;
-  password: string;
-  employeeId: number;
-}
+import { SuccessModalProps } from "@/lib/types";
 
 export default function SuccessModal({ 
   isOpen, 

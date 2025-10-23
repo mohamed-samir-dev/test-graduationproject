@@ -1,11 +1,5 @@
 import { TrendingUp, BarChart3, Activity, Target } from "lucide-react";
-
-interface AttendanceChartProps {
-  title: string;
-  percentage: number;
-  improvement: number;
-  type: "line" | "bar";
-}
+import { AttendanceChartProps } from "@/lib/types";
 
 export default function AttendanceChart({ title, percentage, improvement, type }: AttendanceChartProps) {
   const renderLineChart = () => (

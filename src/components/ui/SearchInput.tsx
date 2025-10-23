@@ -1,8 +1,4 @@
-interface SearchInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}
+import { SearchInputProps } from '@/lib/types';
 
 export default function SearchInput({ value, onChange, placeholder = "Search..." }: SearchInputProps) {
   return (

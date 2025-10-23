@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LoginFormData } from "@/lib/types";
-
-interface LoginFormProps {
-  onSubmit: (data: LoginFormData) => Promise<void>;
-  loading: boolean;
-  error: string;
-}
+import { LoginFormData, LoginFormProps } from "@/lib/types";
 
 export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) {
   const [formData, setFormData] = useState<LoginFormData>({

@@ -1,14 +1,8 @@
 import { Clock, AlertTriangle, XCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLeaveRequests } from "@/hooks/useLeaveRequests";
+import { SummaryCardProps } from "@/lib/types";
 import AbsenceRequestsCard from "./AbsenceRequestsCard";
-
-interface SummaryCardProps {
-  title: string;
-  value?: string | number;
-  color?: "blue" | "yellow" | "red";
-  icon?: React.ReactNode;
-}
 
 function SummaryCard({ title, value, color = "blue", icon }: SummaryCardProps) {
   const colorClasses = {
